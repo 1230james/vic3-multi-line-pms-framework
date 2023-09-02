@@ -9,8 +9,8 @@
 @panel_width_plus_30 = 570          # used to be 490
 @panel_width_plus_70 = 610          # used to be 530
 
-# GGGG constants
-@GGGG_max_PMs_per_line = 6
+# MPM Framework constants
+@MPM_max_PMs_per_line = 5
 
 types production_methods
 {
@@ -497,8 +497,8 @@ types production_methods
         spacing = 10
 
         ### TOP ITEM
-        container = { # GGGG (changed to container)
-            minimumsize = { @panel_width_plus_14 95 } # GGGG
+        container = { # MPM Framework (changed to container)
+            minimumsize = { @panel_width_plus_14 95 } # MPM Framework
 
             highlight_tutorial = {
                    visible = "[BuildingType.IsBeingTutorialHighlighted]"
@@ -536,15 +536,15 @@ types production_methods
             
             ### production methods grouped
             container = {
-                position     = { 135 45 } # GGGG
-                parentanchor = top        # GGGG
+                position     = { 135 45 } # MPM Framework
+                parentanchor = top        # MPM Framework
                 
                 fixedgridbox = {
                     datamodel = "[ProductionMethodsPanelEntry.AccessBuildingType.AccessProductionMethodGroups]"
                     flipdirection = yes
                     addcolumn = 52
                     addrow = 50
-                    datamodel_wrap = @GGGG_max_PMs_per_line # GGGG - PM wraparound because we put too many in barracks & conscript centers lmao
+                    datamodel_wrap = @MPM_max_PMs_per_line # MPM Framework - PM wraparound
 
                     item = {
                         widget = {
@@ -619,7 +619,7 @@ types production_methods
 
                 size = { 100 100 }
                 position = { 7 0 }
-                parentanchor = left|top # GGGG
+                parentanchor = left|top # MPM Framework
 
                 tooltipwidget = {
                     FancyTooltip_BuildingType = {}
@@ -628,8 +628,8 @@ types production_methods
             
             ### ACTION BUTTONS
             flowcontainer = {
-                parentanchor = top|right # GGGG
-                position = { -10 55 }    # GGGG (original vert was -5; 100 - 5 - 40 = 55
+                parentanchor = top|right # MPM Framework
+                position = { -10 55 }    # MPM Framework (original vert was -5; 100 - 5 - 40 = 55
                 spacing = 5
                 
                 ### expand
@@ -769,8 +769,8 @@ types production_methods
             textbox = {
                 text = "BUILDING_TYPE_COUNT"
                 autoresize = yes
-                position = { 11 71 } # GGGG; original is -3; 100 - 26 - 3 = 71
-                parentanchor = top   # GGGG
+                position = { 11 71 } # MPM Framework; original is -3; 100 - 26 - 3 = 71
+                parentanchor = top   # MPM Framework
                 align = hcenter|nobaseline
                 using = fontsize_large
                 minimumsize = { 26 26 }
@@ -784,11 +784,11 @@ types production_methods
             visible = "[ProductionMethodsPanelEntry.IsExpanded]"
 
             item = {
-                container = { # GGGG (changed to container)
+                container = { # MPM Framework (changed to container)
                     highlight_tutorial_ui = {
                         visible = "[Building.IsBeingTutorialHighlighted]"
                     }
-                    minimumsize = { @panel_width 105 } # GGGG
+                    minimumsize = { @panel_width 105 } # MPM Framework
                     parentanchor = hcenter
                     
                     background = {
@@ -865,13 +865,13 @@ types production_methods
                     
                     ### production methods single
                     fixedgridbox = {
-                        position     = { 120 50 } # GGGG // original was 135, -5; 120 to add margins on right end
-                        parentanchor = top        # GGGG // 105 - 5 - 50 = 50
+                        position     = { 120 50 } # MPM Framework // original was 135, -5; 120 to add margins on right end
+                        parentanchor = top        # MPM Framework // 105 - 5 - 50 = 50
                         datamodel = "[Building.AccessProductionMethodGroups]"
                         flipdirection = yes
                         addcolumn = 52
-                        addrow = 50 # GGGG
-                        #datamodel_wrap = @GGGG_max_PMs_per_line # GGGG
+                        addrow = 50 # MPM Framework
+                        datamodel_wrap = @MPM_max_PMs_per_line # MPM Framework
 
                         item = {
                             widget = {
@@ -928,8 +928,8 @@ types production_methods
 
                     ### ACTION BUTTONS
                     flowcontainer = {
-                        parentanchor = bottom|right
-                        position = { -5 -15 }
+                        parentanchor = vcenter|right
+                        position = { -5 20 } # { -5 -15 }
                         spacing = 5
                     
                         ### subsidize

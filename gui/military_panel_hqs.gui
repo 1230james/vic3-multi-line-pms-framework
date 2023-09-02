@@ -856,7 +856,7 @@ types MilitaryPanelHQs {
 			}
 
 			# Building info on the right
-			widget = { # GGGG - Keep as widget; necessary to avoid weird bug where horizontal centering is messed up
+			widget = { # MPM Framework - Keep as widget; necessary to avoid weird bug where horizontal centering is messed up
 				size = { 300 150 }
 
 				### Title: "Regular/Conscript troops in State"
@@ -892,8 +892,8 @@ types MilitaryPanelHQs {
 					}
 				}
 		
-				### Production methods (copy from buildings panel) - Copied over w/ GGGG edits; mind tweaks below
-				fixedgridbox = { # GGGG - Changed to gridbox
+				### Production methods (copy from buildings panel) - Copied over w/ MPM edits; mind tweaks below
+				fixedgridbox = { # MPM Framework - Changed to gridbox
                     position  = { 0 50 } # 40 (title widget size) + 10 (spacing)
                     datamodel = "[Building.AccessProductionMethodGroups]"
                     #spacing =  5
@@ -906,7 +906,7 @@ types MilitaryPanelHQs {
 
                     item = {
                         widget = {
-                            size = { 50 50 } # GGGG
+                            size = { 50 50 } # MPM Framework
                             datacontext = "[Building.AccessProductionMethod(ProductionMethodGroup.Self)]"
                             datacontext = "[ProductionMethod]"
                             datacontext = "[Building]"
@@ -923,7 +923,7 @@ types MilitaryPanelHQs {
                             }
 
                             icon = {
-                                size = { 40 40 } # GGGG
+                                size = { 40 40 } # MPM Framework
                                 parentanchor = center
                                 texture = "[ProductionMethod.GetTexture]"
                             }
@@ -959,14 +959,14 @@ types MilitaryPanelHQs {
                 }
 				
 				### Expand units widget
-				### GGGG - Moved down below
+				### MPM Framework - Moved down below
 			}
 		}
         
-        ### Expand units widget # GGGG - Moved out from above container
+        ### Expand units widget # MPM Framework - Moved out from above container
         widget = {
-            # position = { 0 0 } # GGGG
-            parentanchor = hcenter # GGGG
+            # position = { 0 0 } # MPM Framework
+            parentanchor = hcenter # MPM Framework
             size = { 100% 40 }
 
             # Holds "onclick_" blocks

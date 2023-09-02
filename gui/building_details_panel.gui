@@ -753,11 +753,16 @@ types building_panels
 					# Use this name in the tutorial to highlight all PMs in all building details panels
 					name = "tutorial_highlight_production_methods"
 
-					flowcontainer = {
+					fixedgridbox = { # MPM Framework - Changed to gridbox
 						# Use this widgetid in the tutorial to highlight only the PMs in the target building
 						widgetid = "[Concatenate('tutorial_highlight_production_methods_', Building.GetIDString)]"
 						datamodel = "[Building.AccessProductionMethodGroups]"
-						spacing = 5
+						# spacing = 5
+                        
+                        flipdirection  = yes
+                        datamodel_wrap = 5
+                        addcolumn      = 80
+                        addrow         = 80
 
 						item = {
 							widget = {
@@ -894,7 +899,7 @@ types building_panels
 				widget = {
 					size = { 175 131 }
 					visible = "[GreaterThan_int32(Building.GetNumberOfCombatUnits, '(int32)0')]"
-                    parentanchor = vcenter # GGGG
+                    parentanchor = vcenter # MPM Framework
 
 					background = {
 						texture = "[Building.GetCombatUnitTexture]"
@@ -909,11 +914,11 @@ types building_panels
 				}
 
 				# Building info on the right
-				flowcontainer = { # GGGG - Changed to flowcontainer
-                    maximumsize  = { 330 -1 } # GGGG
-                    parentanchor = vcenter    # GGGG
-                    direction    = vertical   # GGGG
-                    spacing      = 5          # GGGG
+				flowcontainer = { # MPM Framework - Changed to flowcontainer
+                    maximumsize  = { 330 -1 } # MPM Framework
+                    parentanchor = vcenter    # MPM Framework
+                    direction    = vertical   # MPM Framework
+                    spacing      = 5          # MPM Framework
 
 					textbox = {
 						position = { 2 15 }
@@ -925,7 +930,7 @@ types building_panels
 
 
 					### Production methods
-					fixedgridbox = { # GGGG - Changed to gridbox
+					fixedgridbox = { # MPM Framework - Changed to gridbox
 						datamodel = "[Building.AccessProductionMethodGroups]"
 						# spacing =  5
 						# parentanchor = vcenter
@@ -991,7 +996,7 @@ types building_panels
 				}
 			}
             
-            # GGGG - Spacer // keep bottom margin between unit picture + PMs as close to vanilla layout as possible
+            # MPM Framework - Spacer // keep bottom margin between unit picture + PMs as close to vanilla layout as possible
             widget = {
                 size = { 0 10 }
             }
