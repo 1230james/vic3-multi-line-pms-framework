@@ -16,6 +16,6 @@ You may:
 
 ## Installation
 
-1. Install via [Steam Workshop (TBA)](), OR
+1. Install via [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3029908567), OR
 
 2. Clone this repository and install into the Vic3 mods folder manually.
