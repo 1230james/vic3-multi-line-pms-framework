@@ -619,7 +619,7 @@ types production_methods
 
 				size = { 100 100 }
 				position = { 7 0 }
-				parentanchor = left|vcenter
+				parentanchor = left|top # MPM - vcenter -> top
 
 				tooltipwidget = {
 					FancyTooltip_BuildingType = {}
