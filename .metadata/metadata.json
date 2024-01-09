@@ -1,10 +1,14 @@
 {
     "name" : "Multi-line Production Methods Framework",
     "id" : "",
-    "version" : "1.1.0",
+    "version" : "1.2.0",
     "supported_game_version" : "1.5.*",
     "short_description" : "",
-    "tags" : [],
+    "tags" : [
+        "Economy And Buildings",
+        "Graphics",
+        "Utilities"
+    ],
     "relationships" : [],
     "game_custom_data" : {
         "multiplayer_synchronized" : false
