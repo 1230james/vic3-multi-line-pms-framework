@@ -188,6 +188,11 @@ types building_panels
 						size = { 100% 100% }
 						align = nobaseline|hcenter
 						parentanchor = center
+						minimumsize = { 160 40 }
+						maximumsize = { 160 40 }
+						fontsize_min = 14
+						elide = right
+						autoresize = yes
 					}
 
 					textbox = {
@@ -197,6 +202,11 @@ types building_panels
 						size = { 100% 100% }
 						align = nobaseline|hcenter
 						parentanchor = center
+						minimumsize = { 160 40 }
+						maximumsize = { 160 40 }
+						fontsize_min = 14
+						elide = right
+						autoresize = yes
 					}
 				}
 			}
@@ -362,16 +372,7 @@ types building_panels
 						}
 
 						icon = {
-							visible = "[And(Building.ShouldShowAsUnableToHire,Building.HasFailedHires)]"
-							size = { 30 30 }
-							texture = "gfx/interface/icons/generic_icons/employment_not_full.dds"
-							parentanchor = right|vcenter
-							tooltip = "NOT_FULLY_EMPLOYED"
-							position = { -7 0 }
-						}
-						
-						icon = {
-							visible = "[And(Building.ShouldShowAsUnableToHire,Not(Building.HasFailedHires))]"
+							visible = "[Building.ShouldShowAsUnableToHire]"
 							size = { 30 30 }
 							texture = "gfx/interface/icons/generic_icons/employment_not_full.dds"
 							parentanchor = right|vcenter
@@ -384,7 +385,7 @@ types building_panels
 							size = { 30 30 }
 							texture = "gfx/interface/icons/generic_icons/employment_not_hiring.dds"
 							parentanchor = right|vcenter
-							tooltip = "NOT_FULLY_EMPLOYED"
+							tooltip = "NOT_HIRING"
 							position = { -7 0 }
 						}
 
