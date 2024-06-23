@@ -10,7 +10,8 @@
 @panel_width_plus_70 = 610			# used to be 530
 
 # MPM Framework constants
-@MPM_max_PMs_per_line = 4
+@MPM_max_PMs_first_line = 4
+@MPM_max_PMs_per_line   = 8
 
 types production_methods
 {
@@ -72,7 +73,78 @@ types production_methods
                 parentanchor = top        # MPM Framework
 
 				fixedgridbox = {
-					datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups]"
+                    datamodel = "[DataModelFirst(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups, '(int32)4')]" # MPM - Only first 4
+					flipdirection = yes
+					addcolumn = 52
+					addrow = 50
+                    datamodel_wrap = @MPM_max_PMs_first_line # MPM Framework - PM wraparound
+
+					item = {
+						widget = {
+							size = { 50 50 }
+							tooltip = "BUILDING_TYPE_BULK_CHANGE_TOOLTIP"
+							using = tooltip_above
+
+							button = {
+								visible = "[NotEqualTo_int32( GetDataModelSize( ProductionMethodGroup.AccessCountryProductionMethods( GetPlayer.Self ) ), '(int32)1' )]"
+								distribute_visual_state = no
+								inherit_visual_state = no
+								using = expand_button_bg_dropdown
+								size = { 100% 100% }
+								onclick = "[BuildingBrowserBuildingTypeItem.ToggleSwitchProductionMethodMenu( ProductionMethodGroup.AccessSelf, PdxGuiWidget.AccessSelf)]"
+								enabled = "[Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry))]"
+							}
+
+							### pm icon
+							icon = {
+								visible = "[BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self )]"
+								size = { 40 40 }
+								parentanchor = center
+								texture = "[BuildingBrowserBuildingTypeItem.GetAllSameProductionMethodTexture( ProductionMethodGroup.Self )]"
+							}
+
+							### mixed pm icon
+							icon = {
+								visible = "[Not( BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self ) )]"
+								size = { 35 35 }
+								parentanchor = center
+								texture = "[ProductionMethodGroup.GetMixedIcon]"
+							}
+
+							### new pm
+							has_new_pm_icon = {
+								position = { -2 2 }
+								parentanchor = bottom|left
+								blockoverride "visible" {
+									visible = "[And(GetPlayer.HasNewProductionMethodInGroup( ProductionMethodGroup.Self ), Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry)))]"
+								}
+							}
+
+
+							### nr available
+							textbox = {
+								raw_text = "#bold [ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf)]#!"
+								parentanchor = right
+								position = { -5 0 }
+								autoresize = yes
+								align = right|nobaseline
+								visible = "[GreaterThan_int32( ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf), '(int32)1')]"
+								tooltip = "PRODUCTION_METHOD_OPTIONS_BULK"
+								using = tooltip_above
+								using = fontsize_small
+
+								background = {
+									using = default_background
+									margin = { 8 4 }
+								}
+							}
+						}
+					}
+				}
+                fixedgridbox  = { # MPM - use up extra available space
+					visible   = "[GreaterThan_int32(GetDataModelSize(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups), '(int32)4')]"
+                    datamodel = "[DataModelSkipFirst(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups, '(int32)4')]" # MPM - Skip first 4
+                    position  = { 0 50 }
 					flipdirection = yes
 					addcolumn = 52
 					addrow = 50
