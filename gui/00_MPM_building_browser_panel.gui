@@ -1,0 +1,513 @@
+# The spreadsheet cells are a fixed size in order to be optimized
+@spreadsheet_width = 1381
+@spreadsheet_width_minus_10 = 1371
+@spreadsheet_header_height = 80
+@spreadsheet_height = 54
+
+# COPY-PASTED FOR NOW
+@panel_width_minus_10 = 530			# used to be 450
+@panel_width = 540  				# used to be 460
+@panel_width_half = 270				# used to be 230
+@panel_width_plus_10 = 550  		# used to be 470
+@panel_width_plus_14 = 554			# used to be 474
+@panel_width_plus_14_half = 277		# used to be 237
+@panel_width_plus_20 = 560			# used to be 480
+@panel_width_plus_30 = 570			# used to be 490
+@panel_width_plus_70 = 610			# used to be 530
+
+# MPM Framework constants
+@MPM_max_PMs_per_line = 4
+
+types building_browser_panel_types {
+	type building_browser_building_type_item = container {
+		scissor = yes
+		datacontext = "[BuildingBrowserBuildingTypeItem.GetBuildingType]"
+
+		widget = {
+			size = { 100% 100% }
+			parentanchor = right
+
+			icon = {
+				parentanchor = right
+				size = { 1340 244 }
+
+				texture = "[BuildingBrowserBuildingTypeItem.GetBuildingType.GetBackground]"
+				alpha = 0.3
+			}
+		}
+
+		flowcontainer = {
+			minimumsize = { @spreadsheet_width -1 }
+			direction = vertical
+
+			background = {
+				using = entry_bg_simple
+			}
+
+			container = {
+
+				# Hidden button to toggle expand on the entire item
+				button = {
+					size = { 100% 100% }
+					onclick = "[GetVariableSystem.Toggle(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
+				}
+
+				flowcontainer = {
+					minimumsize = { @spreadsheet_width -1 }
+
+					tooltipwidget = {
+						FancyTooltip_BuildingType = {}
+					}
+
+					widget = {
+						size = { @spreadsheet_header_height @spreadsheet_header_height }
+                        parentanchor = vcenter # MPM
+
+						icon = {
+							parentanchor = center
+							size = { 70 70 }
+							texture = "[BuildingType.GetTexture]"
+						}
+					}
+
+					section_header_button = {
+
+						blockoverride "layout" {
+							size = { 420 100% } # MPM # { 420 @spreadsheet_header_height }
+						}
+
+						blockoverride "fontsize" {
+							using = fontsize_xxl
+						}
+
+						blockoverride "left_text" {
+							raw_text = "#v [BuildingType.GetNameNoFormatting]#!"
+						}
+
+						blockoverride "onclick" {
+							onclick = "[GetVariableSystem.Toggle(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
+						}
+
+						blockoverride "onclick_showmore" {
+							visible = "[Not(GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString)))]"
+						}
+
+						blockoverride "onclick_showless" {
+							visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
+						}
+					}
+
+					vertical_divider = {}
+
+					widget = {
+						size = { 120 @spreadsheet_header_height }
+                        parentanchor = vcenter # MPM
+
+						textbox = {
+							text = "[BuildingBrowserBuildingTypeItem.GetTotalFilteredSizeDesc]"
+							align = hcenter|nobaseline
+							using = fontsize_large
+							parentanchor = center
+							default_format = "#v"
+							autoresize = yes
+							maximumsize = { 120 -1 }
+							minimumsize = { 120 -1 }
+							fontsize_min = 12
+							elide = right
+						}
+
+						widget = {
+							parentanchor = top|right
+							size = { 24 24 }
+							position = { -4 4 }
+
+							### expand
+							button_icon_round_map_interaction = {
+								size = { 100% 100% }
+								blockoverride "icon" {
+									texture = "gfx/interface/buttons/button_icons/plus.dds"
+								}
+
+								onclick = "[BuildingType.ActivateExpansionLens]"
+								using = select_button_sound
+								visible = "[And(Or( BuildingType.IsBuildable, BuildingType.IsExpandable ), Not(BuildingType.IsMilitaryBuilding))]"
+								tooltip = "EXPAND"
+							}
+						}
+					}
+
+					vertical_divider = {}
+
+					flowcontainer = { # MPM Framework (changed to flowcontainer from widget)
+						minimumsize   = { 220 @spreadsheet_header_height } # MPM Framework
+						parentanchor  = vcenter
+                        direction     = vertical # MPM
+                        margin_top    = 15 # MPM
+                        margin_left   = 7 # MPM
+                        margin_bottom = 15 # MPM
+                        
+                        fixedgridbox = {
+							datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups]"
+							flipdirection = yes
+							addcolumn = 52
+							addrow = 50
+							# position = { 6 0 } # MPM
+							# parentanchor = vcenter # MPM
+                            datamodel_wrap = @MPM_max_PMs_per_line # MPM Framework - PM wraparound
+
+							item = {
+								widget = {
+									size = { 50 50 }
+									tooltip = "BUILDING_TYPE_BULK_CHANGE_TOOLTIP"
+									using = tooltip_above
+
+									button = {
+										visible = "[NotEqualTo_int32( GetDataModelSize( ProductionMethodGroup.AccessCountryProductionMethods( GetPlayer.Self ) ), '(int32)1' )]"
+										distribute_visual_state = no
+										inherit_visual_state = no
+										using = expand_button_bg_dropdown
+										size = { 100% 100% }
+										onclick = "[BuildingBrowserBuildingTypeItem.ToggleSwitchProductionMethodMenu( ProductionMethodGroup.AccessSelf, PdxGuiWidget.AccessSelf)]"
+										enabled = "[Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry))]"
+									}
+
+									### pm icon
+									icon = {
+										visible = "[BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self )]"
+										size = { 40 40 }
+										parentanchor = center
+										texture = "[BuildingBrowserBuildingTypeItem.GetAllSameProductionMethodTexture( ProductionMethodGroup.Self )]"
+									}
+
+									### mixed pm icon
+									icon = {
+										visible = "[Not( BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self ) )]"
+										size = { 35 35 }
+										parentanchor = center
+										texture = "[ProductionMethodGroup.GetMixedIcon]"
+									}
+
+									### new pm
+									has_new_pm_icon = {
+										position = { -2 2 }
+										parentanchor = bottom|left
+										blockoverride "visible" {
+											visible = "[And(GetPlayer.HasNewProductionMethodInGroup( ProductionMethodGroup.Self ), Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry)))]"
+										}
+									}
+
+
+									### nr available
+									textbox = {
+										raw_text = "#bold [ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf)]#!"
+										parentanchor = top|right
+										position = { -5 0 }
+										autoresize = yes
+										align = right|nobaseline
+										visible = "[GreaterThan_int32( ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf), '(int32)1')]"
+										tooltip = "PRODUCTION_METHOD_OPTIONS_BULK"
+										using = tooltip_above
+										using = fontsize_small
+
+										background = {
+											using = default_background
+											margin = { 8 4 }
+										}
+									}
+								}
+							}
+						}
+					}
+
+					vertical_divider = {}
+
+					textbox = {
+						raw_text = "[BuildingBrowserBuildingTypeItem.GetTotalFilteredEmployed|D] / #maximum [BuildingBrowserBuildingTypeItem.GetTotalFilteredEmployeeCap|D]#!"
+						size = { 130 @spreadsheet_header_height }
+						align = nobaseline
+						using = fontsize_large
+						parentanchor = vcenter
+						default_format = "#v"
+						margin_left = 10
+						margin_right = 10
+						multiline = yes
+					}
+
+					vertical_divider = {}
+
+					widget = {
+						size = { 130 @spreadsheet_header_height }
+                        parentanchor = vcenter # MPM
+
+						textbox = {
+							raw_text = "[BuildingBrowserBuildingTypeItem.GetTotalFilteredCashReserves|D] / #maximum [BuildingBrowserBuildingTypeItem.GetTotalFilteredMaxCashReserves|D]#!"
+							visible = "[And(NotZero_CFixedPoint(BuildingBrowserBuildingTypeItem.GetTotalFilteredCashReserves), NotZero_CFixedPoint(BuildingBrowserBuildingTypeItem.GetTotalFilteredMaxCashReserves))]"
+							size = { 100% 100% }
+							align = nobaseline
+							using = fontsize_large
+							parentanchor = vcenter
+							default_format = "#v"
+							margin_left = 10
+							margin_right = 10
+							multiline = yes
+						}
+					}
+
+					vertical_divider = {}
+
+					widget = {
+						size = { 90 @spreadsheet_header_height }
+                        parentanchor = vcenter # MPM
+
+						textbox = {
+							visible = "[And(Not(BuildingType.IsGovernmentFunded), Not(BuildingType.IsSubsistenceBuilding))]"
+							raw_text = "@money![BuildingBrowserBuildingTypeItem.GetFilteredAverageProductivity|1]"
+							size = { 100 @spreadsheet_header_height }
+							align = nobaseline
+							using = fontsize_large
+							parentanchor = vcenter
+							default_format = "#v"
+							margin_left = 5
+						}
+					}
+
+					vertical_divider = {}
+
+					widget = {
+						size = { 150 @spreadsheet_header_height }
+						parentanchor = vcenter
+
+						flowcontainer = {
+							parentanchor = vcenter
+							margin = { 4 4 }
+
+							widget = {
+								#spot to align with "nationalize"
+								size = { 35 35 }
+							}
+
+							### privatize
+							widget = {
+								size = { 35 35 }
+								building_privatize_bulk_toggle = {
+									parentanchor = center
+								}
+							}
+
+							### subsidize
+							widget = {
+								size = { 35 35 }
+
+								widget = {
+									size = { 35 35 }
+									visible = "[BuildingType.CanBeSubsidized]"
+									parentanchor = center
+
+									icon = {
+										using = rotate_glow_blue
+										size = { 130% 130% }
+										visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
+										alwaystransparent = yes
+										parentanchor = center
+										using = default_fade_in_out
+									}
+
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										tooltip = "SUBSIDIZED_ALL_YES"
+										using = icon_toggle_all_off_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/subsidized.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[BuildingBrowserBuildingTypeItem.HasAllNoSubsidies]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										tooltip = "SUBSIDIZED_ALL_NO"
+										using = icon_toggle_all_on_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/subsidized_not.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[BuildingBrowserBuildingTypeItem.HasMixedSubsidies]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
+										tooltip = "SUBSIDIZED_ALL_MIXED"
+										using = icon_toggle_all_on_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/subsidized_mixed.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+								}
+							}
+
+							### auto expand
+							widget = {
+								size = { 35 35 }
+
+								widget = {
+									size = { 35 35 }
+									visible = "[BuildingType.CanBeAutoExpanded]"
+									parentanchor = center
+
+									icon = {
+										using = rotate_glow_blue
+										size = { 130% 130% }
+										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
+										alwaystransparent = yes
+										parentanchor = center
+										using = default_fade_in_out
+									}
+
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										tooltip = "AUTO_EXPAND_ALL_YES"
+										using = icon_toggle_all_off_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/auto_expand.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllNoAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										tooltip = "AUTO_EXPAND_ALL_NO"
+										using = icon_toggle_all_on_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/auto_expand_not.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+									button_icon_round_action = {
+										size = { 100% 100% }
+										visible = "[BuildingBrowserBuildingTypeItem.HasMixedAutoExpand]"
+										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
+										tooltip = "AUTO_EXPAND_ALL_MIXED"
+										using = icon_toggle_all_on_sound
+
+										blockoverride "icon" {
+											texture = "gfx/interface/production_methods/subsidized_mixed.dds"
+										}
+										blockoverride "icon_size" {
+											size = { 70% 70% }
+										}
+									}
+								}
+							}							
+						}
+					}
+				}
+
+				divider_clean = {
+					visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
+					parentanchor = bottom|hcenter
+					position = { 0 -2 }
+				}
+			}
+
+			fixedgridbox = {
+				addrow = @spreadsheet_height
+				addcolumn = @spreadsheet_width
+				datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildings]"
+				parentanchor = hcenter
+				visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
+
+				item = {
+					widget = {
+						size = { @spreadsheet_width @spreadsheet_height }
+
+						building_browser_building_item = {
+							blockoverride "first_info" {
+								textbox = {
+									text = "BUILDING_BROWSER_BUILDING_AND_STATE"
+									size = { 170 @spreadsheet_height }
+									align = nobaseline
+									margin_right = 10
+									elide = right
+									fontsize_min = 12
+									margin_left = 10
+									using = fontsize_large
+
+									### AUTO DOWNSIZE WARNING
+									icon = {
+										size = { 32 32 }
+										position = { 153 0 }
+										parentanchor = vcenter
+										visible = "[Building.IsAutoDownsizing]"
+										texture = "gfx/interface/production_methods/auto_downsize.dds"
+										tooltip = "[Building.GetAutoDownsizeTooltip]"
+									}
+								}
+
+								vertical_divider = {}
+
+								widget = {
+									size = { 120 @spreadsheet_height }
+
+									flowcontainer = {
+										visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
+										datamodel = "[Building.AccessState.AccessStateRegion.AccessTraits]"
+										parentanchor = vcenter
+										margin_left = 7
+
+										item = {
+											icon = {
+												size = { 35 35 }
+												tooltip = TOOLTIP_STATE_TRAIT
+												onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
+												onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+												alwaystransparent = no
+												texture = "[StateTrait.GetTexture]"
+											}
+										}
+									}
+								}
+
+								vertical_divider = {}
+
+								building_browser_item_ownership_area = {}
+							}
+						}
+
+						divider_clean = {
+							size = { 100% 1 }
+							parentanchor = bottom
+							alpha = 0.15
+						}
+					}
+				}
+			}
+		}
+	}
+}
