@@ -19,6 +19,382 @@
 @MPM_max_PMs_per_line = 4
 
 types building_browser_panel_types {
+    type building_browser_building_item = flowcontainer {
+		tooltipwidget = {
+			FancyTooltip_Building = {}
+		}
+
+		block "first_info" {
+			icon = {
+				size = { 50 50 }
+				texture = "[Building.GetTexture]"
+			}
+
+			textbox = {
+				text = "BUILDING_BROWSER_BUILDING_AND_STATE"
+				size = { 120 @spreadsheet_height }
+				align = nobaseline
+				margin_right = 5
+				margin_left = 5
+				elide = right
+				fontsize_min = 12
+				multiline = yes
+			}
+
+			vertical_divider = {}
+
+			widget = {
+				size = { 120 @spreadsheet_height }
+
+				flowcontainer = {
+					visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
+					datamodel = "[Building.AccessState.AccessStateRegion.AccessTraits]"
+					parentanchor = vcenter
+					margin_left = 5
+
+					item = {
+						icon = {
+							size = { 35 35 }
+							tooltip = TOOLTIP_STATE_TRAIT
+							onmousehierarchyenter = "[AccessHighlightManager.HighlightStateTrait(StateTrait.Self)]"
+							onmousehierarchyleave = "[AccessHighlightManager.RemoveHighlight]"
+							alwaystransparent = no
+							texture = "[StateTrait.GetTexture]"
+						}
+					}
+				}
+			}
+
+
+			vertical_divider = {}
+
+			building_browser_item_ownership_area = {}
+		}
+
+
+		vertical_divider = {}
+
+		### DOWNSIZE / EXPAND
+		widget = {
+			size = { 120 @spreadsheet_height }
+            parentanchor = vcenter # MPM
+
+			building_level_controls = {
+				parentanchor = center
+
+				blockoverride "controller_size" {
+					size = { 110 35 }
+				}
+
+				blockoverride "building_size_small_ownership_chart" {
+					#hide the ownership chart as we have it in a larger version already
+				}
+			}
+		}
+
+		vertical_divider = {}
+
+		flowcontainer = { # MPM - widget -> flowcontainer
+			# size = { 220 @spreadsheet_height }
+			# condensed_building_information_pms = {
+				# parentanchor = center
+			# }
+            
+            minimumsize = { 220 @spreadsheet_height } # MPM
+            direction = vertical # MPM
+            container = {
+                parentanchor = hcenter
+                condensed_building_information_pms = {
+                    
+                }
+            }
+            flowcontainer = {
+                visible = "[GreaterThan_int32(GetDataModelSize(Building.AccessProductionMethodGroups), '(int32)4')]"
+                parentanchor = hcenter
+                MPM_condensed_building_information_pms_row_2 = {
+                    
+                    blockoverride "pm_wrap" {
+                        datamodel_wrap = @MPM_max_PMs_per_line
+                    }
+                }
+            }
+		}
+
+		vertical_divider = {}
+
+		# EMPLOYMENT
+		widget = {
+			size = { 130 @spreadsheet_height }
+            parentanchor = vcenter # MPM
+
+			widget = {
+				size = { 110 30 }
+				parentanchor = center
+
+				default_progressbar_horizontal = {
+					tooltip = "TOOLTIP_BUILDING_EMPLOYMENT"
+					size = { 100% 100% }
+					parentanchor = vcenter
+
+					blockoverride "values" {
+						value = "[FixedPointToFloat(Building.GetEmploymentPercentage)]"
+						min = 0
+						max = 1
+					}
+				}
+
+				flowcontainer = {
+					parentanchor = vcenter
+					textbox = {
+						text = "[Building.GetNoOfEmployed|1*v]"
+						margin_left = 10
+						margin_bottom = 5
+						margin_top = 5
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = vcenter
+						widgetanchor = vcenter
+					}
+
+					textbox = {
+						visible = no
+						#visible = "[LessThan_int64(Building.GetNoOfEmployed, Building.GetEmployeeCap)]"
+						raw_text = "/ #maximum [Building.GetEmployeeCap|1*]#!"
+						margin_left = 7
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = vcenter
+						widgetanchor = vcenter
+					}
+				}
+
+				employment_indicator_icon = {
+					blockoverride "indicator_icon_size" {
+						size = { 25 25 }
+					}
+					parentanchor = right|vcenter
+					position = { -2 0 }
+				}
+			}
+		}
+
+		vertical_divider = {}
+
+		# CASH RESERVES
+		widget = {
+			size = { 130 @spreadsheet_height }
+            parentanchor = vcenter # MPM
+
+			widget = {
+				alpha = "[TransparentIfFalse(Building.IsActive)]"
+				visible = "[And(GreaterThan_CFixedPoint(Building.GetMaxCashReserves, '(CFixedPoint)0'), Building.IsActive)]"
+				size = { 110 30 }
+				parentanchor = center
+				using = cash_reserves_tooltip_with_graph
+
+				gold_progressbar_horizontal = {
+					size = { 100% 100% }
+					alpha = "[TransparentIfFalse(Building.IsActive)]"
+					visible = "[And(GreaterThan_CFixedPoint(Building.GetMaxCashReserves, '(CFixedPoint)0'), Building.IsActive)]"
+
+					blockoverride "glow_size" {
+						size = { 40 100% }
+					}
+
+					parentanchor = vcenter
+					blockoverride "values" {
+						min = 0
+						max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+						value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+					}
+
+					progressbar_highlight = {
+						visible = "[GreaterThanOrEqualTo_CFixedPoint(Building.GetCurrentCashReserves, Building.GetMaxCashReserves)]"
+					}
+				}
+
+				changed_value_decreased_progressbar_horizontal = {
+					size = { 100% 100% }
+					visible = "[GreaterThan_CFixedPoint(GetPrevTrendValue(Building.GetCashReservesTrend), GetTrendValue(Building.GetCashReservesTrend))]"
+
+					blockoverride "second_progressbar" {}
+
+					blockoverride "values" {
+						min = 0
+						max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+						value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+					}
+					blockoverride "glow_size" {
+						size = { 40 100% }
+					}
+					blockoverride "arrow_texture_density" {
+						texture_density = 6 #use to match height of progressbar
+					}
+				}
+
+				changed_value_increased_progressbar_horizontal = {
+					size = { 100% 100% }
+					visible = "[GreaterThan_CFixedPoint(GetTrendValue(Building.GetCashReservesTrend), GetPrevTrendValue(Building.GetCashReservesTrend))]"
+
+					blockoverride "second_progressbar" {}
+
+					blockoverride "values" {
+						min = 0
+						max = "[FixedPointToFloat(Building.GetMaxCashReserves)]"
+						value = "[FixedPointToFloat(Building.GetCurrentCashReserves)]"
+					}
+					blockoverride "glow_size" {
+						size = { 40 100% }
+					}
+					blockoverride "arrow_texture_density" {
+						texture_density = 6 #use to match height of progressbar
+					}
+				}
+
+				flowcontainer = {
+					parentanchor = vcenter
+					textbox = {
+						raw_text = "@money![Building.GetCurrentCashReserves|Dv]"
+						margin_left = 4
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = vcenter
+					}
+
+					textbox = {
+						raw_text = " / #maximum [Building.GetMaxCashReserves|k]#!"
+						visible = no
+						#visible = "[LessThan_CFixedPoint(Building.GetCurrentCashReserves, Building.GetMaxCashReserves)]"
+						align = hcenter|nobaseline
+						autoresize = yes
+						parentanchor = vcenter
+					}
+				}
+			}
+		}
+
+		vertical_divider = {}
+
+		widget = {
+			size = { 90 @spreadsheet_height }
+            parentanchor = vcenter # MPM
+
+			textbox = {
+				visible = "[And(Not(Building.IsGovernmentFunded), Not(Building.IsSubsistenceBuilding))]"
+				using = productivity_tooltip_with_graph
+				raw_text = "@money![Building.GetAverageAnnualEarningsPerEmployeeFormatted|+]"
+				align = nobaseline
+				autoresize = yes
+				margin_left = 5
+				parentanchor = vcenter
+			}
+		}
+
+		vertical_divider = {}
+
+		widget = {
+			size = { 180 @spreadsheet_height }
+            parentanchor = vcenter # MPM
+
+			### ACTION BUTTONS
+			flowcontainer = {
+				parentanchor = vcenter
+				spacing = 10
+				margin = { 4 4 }
+
+				flowcontainer = {
+					### NATIONALIZE
+					widget = {
+						size = { 35 35 }
+
+						building_nationalize_button = { 
+							parentanchor = center  
+						}
+					}
+
+					### PRIVATIZE
+					widget = {
+						size = { 35 35 }
+
+						building_privatize_toggle = {
+							parentanchor = center 
+						}
+					}
+
+					### SUBSIDIZE
+					widget = {
+						size = { 35 35 }
+
+						widget = {
+							visible = "[Building.GetBuildingType.CanBeSubsidized]"
+							size = { 35 35 }
+							parentanchor = center
+
+							icon = {
+								using = rotate_glow_blue
+								size = { 130% 130% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								alwaystransparent = yes
+								parentanchor = center
+								using = default_fade_in_out
+							}
+							button_icon_round_action = {
+								size = { 100% 100% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]"
+								tooltip = SUBSIDIZED_YES
+								using = icon_toggle_single_off_sound
+
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+
+							button_icon_round_action = {
+								size = { 100% 100% }
+								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Not(Building.IsSubsidized))]"
+								enabled = "[IsValid( Building.ToggleSubsidies )]"
+								onclick = "[Execute( Building.ToggleSubsidies )]"
+								tooltip = SUBSIDIZED_NO
+								using = icon_toggle_single_on_sound
+
+								blockoverride "icon" {
+									texture = "gfx/interface/production_methods/subsidized_not.dds"
+								}
+								blockoverride "icon_size" {
+									size = { 80% 80% }
+								}
+							}
+						}
+					}
+
+					### AUTOEXPAND
+					widget = {
+						size = { 35 35 }
+
+						building_auto_expand = {
+							parentanchor = center
+						}
+					}
+					
+					widget = { size = { 5 5 }}
+					button_icon_goto = {
+						parentanchor = vcenter
+						size = { 30 30 }
+						using = tooltip_above
+						tooltip = "GO_TO_DETAILS"
+						visible = "[Building.IsValid]"
+						onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
+					}
+				}
+			}
+		}
+	}
+    
 	type building_browser_building_type_item = container {
 		scissor = yes
 		datacontext = "[BuildingBrowserBuildingTypeItem.GetBuildingType]"
@@ -436,16 +812,17 @@ types building_browser_panel_types {
 				}
 			}
 
-			fixedgridbox = {
-				addrow = @spreadsheet_height
+			dynamicgridbox = { # MPM - fixedgridbox -> dynamicgridbox
+				# addrow = @spreadsheet_height # MPM
 				addcolumn = @spreadsheet_width
 				datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildings]"
 				parentanchor = hcenter
 				visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
 
 				item = {
-					widget = {
-						size = { @spreadsheet_width @spreadsheet_height }
+					flowcontainer = { # MPM - widget -> flowcontainer
+						minimumsize = { @spreadsheet_width @spreadsheet_height } # MPM
+                        direction = vertical # MPM
 
 						building_browser_building_item = {
 							blockoverride "first_info" {
@@ -458,11 +835,13 @@ types building_browser_panel_types {
 									fontsize_min = 12
 									margin_left = 10
 									using = fontsize_large
+                                    
+                                    parentanchor = vcenter # MPM
 
 									### AUTO DOWNSIZE WARNING
 									icon = {
 										size = { 32 32 }
-										position = { 153 0 }
+										position = { 135 0 } # { 153 0 } # MPM
 										parentanchor = vcenter
 										visible = "[Building.IsAutoDownsizing]"
 										texture = "gfx/interface/production_methods/auto_downsize.dds"
@@ -474,6 +853,7 @@ types building_browser_panel_types {
 
 								widget = {
 									size = { 120 @spreadsheet_height }
+                                    parentanchor = vcenter # MPM
 
 									flowcontainer = {
 										visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
@@ -496,7 +876,9 @@ types building_browser_panel_types {
 
 								vertical_divider = {}
 
-								building_browser_item_ownership_area = {}
+								building_browser_item_ownership_area = {
+                                    parentanchor = vcenter # MPM
+                                }
 							}
 						}
 

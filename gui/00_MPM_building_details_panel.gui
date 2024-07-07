@@ -396,7 +396,10 @@ types building_panels
         name = "tutorial_highlight_condensed_production_methods"
 		datamodel = "[DataModelSkipFirst(Building.AccessProductionMethodGroups, '(int32)4')]" # MPM - Skip first 4
 		flipdirection = yes
-        datamodel_wrap = 7 # MPM
+        
+        block "pm_wrap" {
+            datamodel_wrap = 7 # MPM
+        }
 
 		block "pms_slot_sizes" {
 			addcolumn = 52
