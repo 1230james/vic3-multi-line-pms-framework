@@ -415,13 +415,14 @@ types production_methods
 					blockoverride "extra_items_in_production_methods_list" {
 						military_building_combat_unit_summary = {
 							parentanchor = right|vcenter
+                            position = { -230 0 } # MPM
 
 							blockoverride "icon_size" {
 								size = { 50 50 }
 							}
 
 							blockoverride "overlappingitembox_size" {
-								size = { 190 50 }
+								size = { 226 50 } # { 190 50 } # MPM
 							}
 
 							blockoverride "unit_number_margins" {
