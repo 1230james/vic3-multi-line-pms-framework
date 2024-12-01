@@ -17,6 +17,9 @@ types production_methods
 {
 	### PM ITEM
 	type buildings_production_method_item = flowcontainer {
+		direction = vertical
+		spacing = 10
+
 		block "visible" {
 			visible = "[Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildings))]"
 		}
@@ -24,9 +27,6 @@ types production_methods
 		block "datacontext" {
 			datacontext = "[BuildingBrowserBuildingTypeItem.GetBuildingType]"
 		}
-
-		direction = vertical
-		spacing = 10
 
 		### TOP ITEM
 		container = { # MPM Framework (changed to container)
@@ -48,7 +48,7 @@ types production_methods
 				}
 				blockoverride "right_text" {
 					section_header_right_text = {
-						visible = "[And( And(Not(BuildingType.IsGovernmentFunded), Not(BuildingType.IsSubsistenceBuilding)), GreaterThan_int32( BuildingType.GetLevelCountInCountry(GetPlayer.Self), '(int32)0' ))]"
+						visible = "[And( And(Not(BuildingType.IsGovernmentFunded), Not(BuildingType.IsSubsistenceBuilding)), GreaterThan_int32( BuildingType.GetNumLevelsInCountryRaw(GetPlayer.Self), '(int32)0' ))]"
 						text = "[BuildingType.GetProductivitySpanDesc(GetPlayer.Self)]"
 						tooltip = "PRODUCTIVITY_SPAN_TOOLTIP"
 					}
@@ -69,7 +69,7 @@ types production_methods
 
 			### production methods grouped
 			container = {
-				position     = { 135 45 } # MPM Framework
+				position     = { 110 45 } # MPM Framework
                 parentanchor = top        # MPM Framework
 
 				fixedgridbox = {
@@ -216,7 +216,7 @@ types production_methods
 
 			### building icon
 			button = {
-				texture = "[BuildingType.GetTexture]"
+				texture = "[BuildingType.GetIcon]"
 				onrightclick = "[RightClickMenuManager.ShowForBuildingType(BuildingType.AccessSelf)]"
 				effectname = "NoHighlight"
 				distribute_visual_state = no
@@ -234,7 +234,7 @@ types production_methods
 			### ACTION BUTTONS
 			flowcontainer = {
 				parentanchor = top|right # MPM Framework
-                position = { -10 55 }    # MPM Framework (original vert was -5; 100 - 5 - 40 = 55
+                position = { -10 50 }    # MPM Framework (original vert was -5; 95 - 5 - 45 = 50
 				spacing = 5
 
 				### expand
@@ -248,137 +248,28 @@ types production_methods
 					using = select_button_sound
 					visible = "[And(Or( BuildingType.IsBuildable, BuildingType.IsExpandable ), Not(BuildingType.IsMilitaryBuilding))]"
 					tooltip = "EXPAND"
+					using = tooltip_se
+				}
+				
+				### nationalize
+				building_type_nationalize_button = {
+					size = { 40 40 }
 				}
 
 				### privatize
-				building_privatize_bulk_toggle = {
+				building_type_privatize_toggle = {
 					size = { 40 40 }
 				}
 
 				### subsidize
-				widget = {
-					size = { 40 40 }
-					visible = "[BuildingType.CanBeSubsidized]"
-
-					icon = {
-						using = rotate_glow_blue
-						size = { 130% 130% }
-						visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
-						alwaystransparent = yes
-						parentanchor = center
-						using = default_fade_in_out
-					}
-
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						tooltip = "SUBSIDIZED_ALL_YES"
-						using = icon_toggle_all_off_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/subsidized.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[BuildingBrowserBuildingTypeItem.HasAllNoSubsidies]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						tooltip = "SUBSIDIZED_ALL_NO"
-						using = icon_toggle_all_on_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/subsidized_not.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
-
-
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[BuildingBrowserBuildingTypeItem.HasMixedSubsidies]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-						tooltip = "SUBSIDIZED_ALL_MIXED"
-						using = icon_toggle_all_on_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/subsidized_mixed.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
+				building_type_subsidize_toggle = {
+					size = { 40 40 } 
 				}
 
 				### auto expand
-				widget = {
-					size = { 40 40 }
-					visible = "[BuildingType.CanBeAutoExpanded]"
-
-					icon = {
-						using = rotate_glow_blue
-						size = { 130% 130% }
-						visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-						alwaystransparent = yes
-						parentanchor = center
-						using = default_fade_in_out
-					}
-
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						tooltip = "AUTO_EXPAND_ALL_YES"
-						using = icon_toggle_all_off_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/auto_expand.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[And(BuildingBrowserBuildingTypeItem.HasAllNoAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						tooltip = "AUTO_EXPAND_ALL_NO"
-						using = icon_toggle_all_on_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/auto_expand_not.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
-					button_icon_round_action = {
-						size = { 100% 100% }
-						visible = "[BuildingBrowserBuildingTypeItem.HasMixedAutoExpand]"
-						enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-						tooltip = "AUTO_EXPAND_ALL_MIXED"
-						using = icon_toggle_all_on_sound
-
-						blockoverride "icon" {
-							texture = "gfx/interface/production_methods/subsidized_mixed.dds"
-						}
-						blockoverride "icon_size" {
-							size = { 70% 70% }
-						}
-					}
+				building_type_auto_expand_toggle = {
+					size = { 40 40 } 
 				}
-
 			}
 
 			### PRODUCTIVITY SPAN ###
@@ -395,22 +286,26 @@ types production_methods
 
 		### EXPANDED LIST OF BUILDINGS
 		expanded_list = {
+			visible = "[BuildingBrowserPanel.IsBuildingTypeExpanded(BuildingBrowserBuildingTypeItem.GetBuildingType)]"
 			using = expanded_list_bg
+
 			blockoverride "dark_area_alpha" {
 				alpha = 0.5
 			}
 
 			datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildings]"
-			visible = "[BuildingBrowserPanel.IsBuildingTypeExpanded(BuildingBrowserBuildingTypeItem.GetBuildingType)]"
 
 			item = {
 				condensed_building_information = {
 					background = {
 						using = entry_bg_simple
 					}
+
 					background = {
 						using = entry_bg_simple
 					}
+
+					blockoverride "action_buttons" {}
 
 					blockoverride "extra_items_in_production_methods_list" {
 						military_building_combat_unit_summary = {

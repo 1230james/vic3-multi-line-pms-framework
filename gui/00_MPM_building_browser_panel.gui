@@ -15,6 +15,9 @@
 @panel_width_plus_30 = 570			# used to be 490
 @panel_width_plus_70 = 610			# used to be 530
 
+
+@all_filter_selected_alpha = 0.35
+
 # MPM Framework constants
 @MPM_max_PMs_per_line = 4
 
@@ -25,20 +28,32 @@ types building_browser_panel_types {
 		}
 
 		block "first_info" {
-			icon = {
-				size = { 50 50 }
-				texture = "[Building.GetTexture]"
-			}
+			button = {
+				onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
+				
+				size = { 170 @spreadsheet_height }
 
-			textbox = {
-				text = "BUILDING_BROWSER_BUILDING_AND_STATE"
-				size = { 120 @spreadsheet_height }
-				align = nobaseline
-				margin_right = 5
-				margin_left = 5
-				elide = right
-				fontsize_min = 12
-				multiline = yes
+				icon = {
+					texture = "[Building.GetIcon]"
+					size = { 50 50 }
+					parentanchor = vcenter
+				}
+
+				textbox = {
+					datacontext = "[Building.GetState]"
+									
+					position = { 50 0 }
+					parentanchor = vcenter
+					size = { 120 @spreadsheet_height }
+					margin = { 5 0 }
+					
+					align = nobaseline
+					elide = right
+					fontsize_min = 12
+					multiline = yes
+
+					text = "STATE_NAME_WITH_FOREIGN_FLAG_NO_FORMAT"
+				}
 			}
 
 			vertical_divider = {}
@@ -48,7 +63,7 @@ types building_browser_panel_types {
 
 				flowcontainer = {
 					visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
-					datamodel = "[Building.AccessState.AccessStateRegion.AccessTraits]"
+					datamodel = "[DataModelFirst(Building.AccessState.AccessStateRegion.AccessTraits, '(int32)3')]"
 					parentanchor = vcenter
 					margin_left = 5
 
@@ -325,50 +340,8 @@ types building_browser_panel_types {
 					widget = {
 						size = { 35 35 }
 
-						widget = {
-							visible = "[Building.GetBuildingType.CanBeSubsidized]"
-							size = { 35 35 }
+						building_subsidize_toggle = {
 							parentanchor = center
-
-							icon = {
-								using = rotate_glow_blue
-								size = { 130% 130% }
-								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
-								alwaystransparent = yes
-								parentanchor = center
-								using = default_fade_in_out
-							}
-							button_icon_round_action = {
-								size = { 100% 100% }
-								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Building.IsSubsidized)]"
-								enabled = "[IsValid( Building.ToggleSubsidies )]"
-								onclick = "[Execute( Building.ToggleSubsidies )]"
-								tooltip = SUBSIDIZED_YES
-								using = icon_toggle_single_off_sound
-
-								blockoverride "icon" {
-									texture = "gfx/interface/production_methods/subsidized.dds"
-								}
-								blockoverride "icon_size" {
-									size = { 80% 80% }
-								}
-							}
-
-							button_icon_round_action = {
-								size = { 100% 100% }
-								visible = "[And(Building.GetBuildingType.CanBeSubsidized,Not(Building.IsSubsidized))]"
-								enabled = "[IsValid( Building.ToggleSubsidies )]"
-								onclick = "[Execute( Building.ToggleSubsidies )]"
-								tooltip = SUBSIDIZED_NO
-								using = icon_toggle_single_on_sound
-
-								blockoverride "icon" {
-									texture = "gfx/interface/production_methods/subsidized_not.dds"
-								}
-								blockoverride "icon_size" {
-									size = { 80% 80% }
-								}
-							}
 						}
 					}
 
@@ -376,12 +349,13 @@ types building_browser_panel_types {
 					widget = {
 						size = { 35 35 }
 
-						building_auto_expand = {
+						building_auto_expand_toggle = {
 							parentanchor = center
 						}
 					}
 					
 					widget = { size = { 5 5 }}
+
 					button_icon_goto = {
 						parentanchor = vcenter
 						size = { 30 30 }
@@ -442,7 +416,7 @@ types building_browser_panel_types {
 						icon = {
 							parentanchor = center
 							size = { 70 70 }
-							texture = "[BuildingType.GetTexture]"
+							texture = "[BuildingType.GetIcon]"
 						}
 					}
 
@@ -658,14 +632,17 @@ types building_browser_panel_types {
 							margin = { 4 4 }
 
 							widget = {
-								#spot to align with "nationalize"
 								size = { 35 35 }
+								building_type_nationalize_button = {
+									parentanchor = center
+								}
 							}
 
 							### privatize
 							widget = {
 								size = { 35 35 }
-								building_privatize_bulk_toggle = {
+								
+								building_type_privatize_toggle = {
 									parentanchor = center
 								}
 							}
@@ -674,133 +651,19 @@ types building_browser_panel_types {
 							widget = {
 								size = { 35 35 }
 
-								widget = {
-									size = { 35 35 }
-									visible = "[BuildingType.CanBeSubsidized]"
+								building_type_subsidize_toggle = {
 									parentanchor = center
-
-									icon = {
-										using = rotate_glow_blue
-										size = { 130% 130% }
-										visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
-										alwaystransparent = yes
-										parentanchor = center
-										using = default_fade_in_out
-									}
-
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[BuildingBrowserBuildingTypeItem.HasAllSubsidies]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										tooltip = "SUBSIDIZED_ALL_YES"
-										using = icon_toggle_all_off_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/subsidized.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[BuildingBrowserBuildingTypeItem.HasAllNoSubsidies]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										tooltip = "SUBSIDIZED_ALL_NO"
-										using = icon_toggle_all_on_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/subsidized_not.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[BuildingBrowserBuildingTypeItem.HasMixedSubsidies]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllSubsidies )]"
-										tooltip = "SUBSIDIZED_ALL_MIXED"
-										using = icon_toggle_all_on_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/subsidized_mixed.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
 								}
 							}
 
-							### auto expand
+							### Auto Expand
 							widget = {
 								size = { 35 35 }
 
-								widget = {
-									size = { 35 35 }
-									visible = "[BuildingType.CanBeAutoExpanded]"
+								building_type_auto_expand_toggle = {
 									parentanchor = center
-
-									icon = {
-										using = rotate_glow_blue
-										size = { 130% 130% }
-										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-										alwaystransparent = yes
-										parentanchor = center
-										using = default_fade_in_out
-									}
-
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										tooltip = "AUTO_EXPAND_ALL_YES"
-										using = icon_toggle_all_off_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/auto_expand.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[And(BuildingBrowserBuildingTypeItem.HasAllNoAutoExpand, BuildingBrowserBuildingTypeItem.GetBuildingType.CanBeAutoExpanded)]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										tooltip = "AUTO_EXPAND_ALL_NO"
-										using = icon_toggle_all_on_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/auto_expand_not.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
-									button_icon_round_action = {
-										size = { 100% 100% }
-										visible = "[BuildingBrowserBuildingTypeItem.HasMixedAutoExpand]"
-										enabled = "[IsValid( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										onclick = "[Execute( BuildingBrowserBuildingTypeItem.ToggleAllAutoExpand )]"
-										tooltip = "AUTO_EXPAND_ALL_MIXED"
-										using = icon_toggle_all_on_sound
-
-										blockoverride "icon" {
-											texture = "gfx/interface/production_methods/subsidized_mixed.dds"
-										}
-										blockoverride "icon_size" {
-											size = { 70% 70% }
-										}
-									}
 								}
-							}							
+							}						
 						}
 					}
 				}
@@ -816,7 +679,7 @@ types building_browser_panel_types {
 				# addrow = @spreadsheet_height # MPM
 				addcolumn = @spreadsheet_width
 				datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildings]"
-                datamodel_reuse_widgets = yes
+				datamodel_reuse_widgets = yes
 				parentanchor = hcenter
 				visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
 
@@ -827,26 +690,35 @@ types building_browser_panel_types {
 
 						building_browser_building_item = {
 							blockoverride "first_info" {
-								textbox = {
-									text = "BUILDING_BROWSER_BUILDING_AND_STATE"
+
+								button = {
+									onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
 									size = { 170 @spreadsheet_height }
-									align = nobaseline
-									margin_right = 10
-									elide = right
-									fontsize_min = 12
-									margin_left = 10
-									using = fontsize_large
                                     
                                     parentanchor = vcenter # MPM
 
-									### AUTO DOWNSIZE WARNING
-									icon = {
-										size = { 32 32 }
-										position = { 135 0 } # { 153 0 } # MPM
-										parentanchor = vcenter
-										visible = "[Building.IsAutoDownsizing]"
-										texture = "gfx/interface/production_methods/auto_downsize.dds"
-										tooltip = "[Building.GetAutoDownsizeTooltip]"
+									textbox = {
+										datacontext = "[Building.GetState]"
+										
+										size = { 100% 100% }
+										align = nobaseline
+										margin = { 10 0 }
+										elide = right
+										fontsize_min = 12
+										
+										using = fontsize_large
+
+										text = "STATE_NAME_WITH_FOREIGN_FLAG_NO_FORMAT"
+
+										### AUTO DOWNSIZE WARNING
+										icon = {
+											size = { 32 32 }
+											position = { 153 0 }
+											parentanchor = vcenter
+											visible = "[Building.IsAutoDownsizing]"
+											texture = "gfx/interface/production_methods/auto_downsize.dds"
+											tooltip = "[Building.GetAutoDownsizeTooltip]"
+										}									
 									}
 								}
 
@@ -858,7 +730,7 @@ types building_browser_panel_types {
 
 									flowcontainer = {
 										visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
-										datamodel = "[Building.AccessState.AccessStateRegion.AccessTraits]"
+										datamodel = "[DataModelFirst(Building.AccessState.AccessStateRegion.AccessTraits, '(int32)3')]"
 										datamodel_reuse_widgets = yes
 										parentanchor = vcenter
 										margin_left = 7
