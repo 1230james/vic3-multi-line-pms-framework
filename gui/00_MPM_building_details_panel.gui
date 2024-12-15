@@ -9,6 +9,9 @@
 @panel_width_plus_30 = 570			# used to be 490
 @panel_width_plus_70 = 610			# used to be 530
 
+@building_process_item_width = 200
+
+
 types building_panels
 {
 	type condensed_building_information = flowcontainer {
@@ -34,7 +37,6 @@ types building_panels
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
 				spacing = 5
-
 
 				vbox = {
 					### DOWNSIZE / EXPAND
@@ -70,28 +72,44 @@ types building_panels
 						onclick = "[InformationPanelBar.OpenBuildingDetailsPanel(Building.AccessSelf)]"
 						tooltip = "GO_TO_BUTTON_BUILDING"
 						using = tooltip_ne
+						maximumsize = { 170 -1 }
 
 						textbox = {
 							size = { 100% 100% }
 							margin = { 10 0 }
+							datacontext = "[Building.GetState]"
+							text = "STATE_NAME_WITH_FOREIGN_FLAG"
+							parentanchor = vcenter
 							align = nobaseline
 							elide =  right
-							fontsize_min = 14
-							text = "[Building.GetState.GetNameNoFormatting]"
 						}
 					}
 				}
 
-				building_auto_expand_icon = {
-					visible = "[Building.IsAutoExpanding]"
+				block "action_status_icons" {
+					building_auto_expand_icon = {
+						visible = "[Building.IsAutoExpanding]"
+					}
+
+					building_subsidized_icon = {
+						visible = "[Building.IsSubsidized]"
+					}
+
+					building_privatize_icon = {
+						visible = "[Building.CanBePrivatized]"
+					}
 				}
 
-				building_subsidized_icon = {
-					visible = "[Building.IsSubsidized]"
-				}
+				expand = {}
 
-				building_privatize_icon = {
-					visible = "[Building.CanBePrivatized]"
+				block "action_buttons" {
+					building_auto_expand_toggle = {}
+
+					building_subsidize_toggle = {}
+
+					building_privatize_toggle = {}
+
+					building_nationalize_button = {}
 				}
 
 				hbox = {
@@ -150,6 +168,7 @@ types building_panels
 					button_icon_round = {
 						size = { 36 36 }
 						onclick = "[RightClickMenuManager.ToggleBuildingActions(Building.AccessSelf, PdxGuiWidget.AccessSelf)]"
+						enabled = "[ObjectsEqual(Building.GetState.GetOwner.Self, GetPlayer.Self)]"
 						tooltip = "SHOW_BUILDING_ACTIONS"
 						using = tooltip_ne
 
@@ -163,16 +182,14 @@ types building_panels
 					}
 				}
 			}
-
-
 		}
 
 		block "divider" {}
 
 		### PMS / EMPLOYMENT / CASH RESERVES
-		flowcontainer = {
+		flowcontainer = { # MPM
 			minimumsize = { @panel_width 80 }
-            direction = vertical
+            direction = vertical # MPM
 			container = {
 				# parentanchor = vcenter # MPM
                 minimumsize = { @panel_width 80 } # MPM
