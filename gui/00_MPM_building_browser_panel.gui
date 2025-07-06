@@ -18,11 +18,8 @@
 
 @all_filter_selected_alpha = 0.35
 
-# MPM Framework constants
-@MPM_max_PMs_per_line = 4
-
 types building_browser_panel_types {
-    type building_browser_building_item = flowcontainer {
+	type building_browser_building_item = flowcontainer {
 		tooltipwidget = {
 			FancyTooltip_Building = {}
 		}
@@ -92,7 +89,6 @@ types building_browser_panel_types {
 		### DOWNSIZE / EXPAND
 		widget = {
 			size = { 120 @spreadsheet_height }
-            parentanchor = vcenter # MPM
 
 			building_level_controls = {
 				parentanchor = center
@@ -153,7 +149,6 @@ types building_browser_panel_types {
 		# EMPLOYMENT
 		widget = {
 			size = { 130 @spreadsheet_height }
-            parentanchor = vcenter # MPM
 
 			widget = {
 				size = { 110 30 }
@@ -211,7 +206,6 @@ types building_browser_panel_types {
 		# CASH RESERVES
 		widget = {
 			size = { 130 @spreadsheet_height }
-            parentanchor = vcenter # MPM
 
 			widget = {
 				alpha = "[TransparentIfFalse(Building.IsActive)]"
@@ -305,7 +299,6 @@ types building_browser_panel_types {
 
 		widget = {
 			size = { 90 @spreadsheet_height }
-            parentanchor = vcenter # MPM
 
 			textbox = {
 				visible = "[And(Not(Building.IsGovernmentFunded), Not(Building.IsSubsistenceBuilding))]"
@@ -322,7 +315,6 @@ types building_browser_panel_types {
 
 		widget = {
 			size = { 180 @spreadsheet_height }
-            parentanchor = vcenter # MPM
 
 			### ACTION BUTTONS
 			flowcontainer = {
@@ -430,7 +422,6 @@ types building_browser_panel_types {
 
 					widget = {
 						size = { @spreadsheet_header_height @spreadsheet_header_height }
-                        parentanchor = vcenter # MPM
 
 						icon = {
 							parentanchor = center
@@ -442,7 +433,7 @@ types building_browser_panel_types {
 					section_header_button = {
 
 						blockoverride "layout" {
-							size = { 420 100% } # MPM # { 420 @spreadsheet_header_height }
+							size = { 420 @spreadsheet_header_height }
 						}
 
 						blockoverride "fontsize" {
@@ -470,7 +461,6 @@ types building_browser_panel_types {
 
 					widget = {
 						size = { 120 @spreadsheet_header_height }
-                        parentanchor = vcenter # MPM
 
 						textbox = {
 							text = "[BuildingBrowserBuildingTypeItem.GetTotalFilteredSizeDesc]"
@@ -507,10 +497,11 @@ types building_browser_panel_types {
 
 					vertical_divider = {}
 
-					widget = { # MPM Framework (changed to flowcontainer from widget)
-						size = { 220 @spreadsheet_header_height } # MPM Framework
+					widget = {
+						size = { 220 @spreadsheet_header_height }
 						parentanchor = vcenter
                         
+                        # MPM - The entire fixedgridbox has been replaced with this thing
                         MPM_pms_area_building_type = {
                             parentanchor = center
                             
@@ -553,7 +544,6 @@ types building_browser_panel_types {
 
 					widget = {
 						size = { 130 @spreadsheet_header_height }
-                        parentanchor = vcenter # MPM
 
 						textbox = {
 							raw_text = "[BuildingBrowserBuildingTypeItem.GetTotalFilteredCashReserves|D] / #maximum [BuildingBrowserBuildingTypeItem.GetTotalFilteredMaxCashReserves|D]#!"
@@ -573,7 +563,6 @@ types building_browser_panel_types {
 
 					widget = {
 						size = { 90 @spreadsheet_header_height }
-                        parentanchor = vcenter # MPM
 
 						textbox = {
 							visible = "[And(Not(BuildingType.IsGovernmentFunded), Not(BuildingType.IsSubsistenceBuilding))]"
@@ -641,8 +630,8 @@ types building_browser_panel_types {
 				}
 			}
 
-			dynamicgridbox = { # MPM - fixedgridbox -> dynamicgridbox
-				# addrow = @spreadsheet_height # MPM
+			fixedgridbox = {
+				addrow = @spreadsheet_height
 				addcolumn = @spreadsheet_width
 				datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildings]"
 				datamodel_reuse_widgets = yes
@@ -650,9 +639,8 @@ types building_browser_panel_types {
 				visible = "[GetVariableSystem.Exists(Concatenate('building_browser_building_type_', BuildingType.GetIDString))]"
 
 				item = {
-					flowcontainer = { # MPM - widget -> flowcontainer
-						minimumsize = { @spreadsheet_width @spreadsheet_height } # MPM
-                        direction = vertical # MPM
+					widget = {
+						size = { @spreadsheet_width @spreadsheet_height }
 
 						building_browser_building_item = {
 							blockoverride "first_info" {
@@ -661,8 +649,6 @@ types building_browser_panel_types {
 									onrightclick = "[RightClickMenuManager.ShowForBuilding(Building.AccessSelf)]"
 									size = { 170 @spreadsheet_height }
 									using = default_button
-                                    
-                                    parentanchor = vcenter # MPM
 
 									hbox = {
 										layoutpolicy_horizontal = expanding
@@ -696,7 +682,6 @@ types building_browser_panel_types {
 
 								widget = {
 									size = { 120 @spreadsheet_height }
-                                    parentanchor = vcenter # MPM
 
 									flowcontainer = {
 										visible = "[Not(IsDataModelEmpty(Building.AccessState.AccessStateRegion.AccessTraits))]"
@@ -720,9 +705,7 @@ types building_browser_panel_types {
 
 								vertical_divider = {}
 
-								building_browser_item_ownership_area = {
-                                    parentanchor = vcenter # MPM
-                                }
+								building_browser_item_ownership_area = {}
 							}
 						}
 
