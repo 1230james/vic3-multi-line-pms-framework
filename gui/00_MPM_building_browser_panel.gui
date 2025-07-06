@@ -109,33 +109,41 @@ types building_browser_panel_types {
 
 		vertical_divider = {}
 
-		flowcontainer = { # MPM - widget -> flowcontainer
-			# size = { 220 @spreadsheet_height }
-			# condensed_building_information_pms = {
+		widget = {
+			size = { 220 @spreadsheet_height }
+			# condensed_building_information_pms = { # MPM
 				# parentanchor = center
+
+				# blockoverride "trade_center_extra_info_position" {
+					# position = { 110 0 }
+				# }
+
+				# blockoverride "trade_center_extra_info_size" {
+					# size = { 60 23 }
+				# }
 			# }
             
-            minimumsize = { 220 @spreadsheet_height } # MPM
-            direction = vertical # MPM
-            container = {
+            MPM_pms_area_building = {
                 parentanchor = hcenter
-                condensed_building_information_pms = {
-                    blockoverride "trade_center_extra_info_position" {
-                        position = { 110 0 }
-                    }
-
-                    blockoverride "trade_center_extra_info_size" {
-                        size = { 60 23 }
-                    }
+                position = { 0 -5 }
+                
+                blockoverride scrollarea_size {
+                    size = { 200 55 }
                 }
-            }
-            flowcontainer = { # MPM
-                visible = "[GreaterThan_int32(GetDataModelSize(Building.AccessProductionMethodGroups), '(int32)4')]"
-                parentanchor = hcenter
-                MPM_condensed_building_information_pms_row_2 = {
-                    blockoverride "pm_wrap" {
-                        datamodel_wrap = @MPM_max_PMs_per_line
-                    }
+                blockoverride scrollbar_size {
+                    size = { 8 4 }
+                }
+                blockoverride track_size {
+                    size = { 8 2 }
+                }
+                blockoverride slider_size {
+                    framesize = { 40 4 }
+                }
+                blockoverride pm_size {
+                    size = { 50 50 }
+                }
+                blockoverride pm_icon_size {
+                    size = { 40 40 }
                 }
             }
 		}
@@ -499,85 +507,32 @@ types building_browser_panel_types {
 
 					vertical_divider = {}
 
-					flowcontainer = { # MPM Framework (changed to flowcontainer from widget)
-						minimumsize   = { 220 @spreadsheet_header_height } # MPM Framework
-						parentanchor  = vcenter
-                        direction     = vertical # MPM
-                        margin_top    = 15 # MPM
-                        margin_left   = 7 # MPM
-                        margin_bottom = 15 # MPM
+					widget = { # MPM Framework (changed to flowcontainer from widget)
+						size = { 220 @spreadsheet_header_height } # MPM Framework
+						parentanchor = vcenter
                         
-                        fixedgridbox = {
-							datamodel = "[BuildingBrowserBuildingTypeItem.GetBuildingType.AccessProductionMethodGroups]"
-							flipdirection = yes
-							addcolumn = 52
-							addrow = 50
-							# position = { 6 0 } # MPM
-							# parentanchor = vcenter # MPM
-                            datamodel_wrap = @MPM_max_PMs_per_line # MPM Framework - PM wraparound
-
-							item = {
-								widget = {
-									size = { 50 50 }
-									tooltip = "BUILDING_TYPE_BULK_CHANGE_TOOLTIP"
-									using = tooltip_above
-
-									button = {
-										visible = "[NotEqualTo_int32( GetDataModelSize( ProductionMethodGroup.AccessCountryProductionMethods( GetPlayer.Self ) ), '(int32)1' )]"
-										distribute_visual_state = no
-										inherit_visual_state = no
-										using = expand_button_bg_dropdown
-										size = { 100% 100% }
-										onclick = "[BuildingBrowserBuildingTypeItem.ToggleSwitchProductionMethodMenu( ProductionMethodGroup.AccessSelf, PdxGuiWidget.AccessSelf)]"
-										enabled = "[Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry))]"
-									}
-
-									### pm icon
-									icon = {
-										visible = "[BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self )]"
-										size = { 40 40 }
-										parentanchor = center
-										texture = "[BuildingBrowserBuildingTypeItem.GetAllSameProductionMethodTexture( ProductionMethodGroup.Self )]"
-									}
-
-									### mixed pm icon
-									icon = {
-										visible = "[Not( BuildingBrowserBuildingTypeItem.HasAllSameProductionMethod( ProductionMethodGroup.Self ) )]"
-										size = { 35 35 }
-										parentanchor = center
-										texture = "[ProductionMethodGroup.GetMixedIcon]"
-									}
-
-									### new pm
-									has_new_pm_icon = {
-										position = { -2 2 }
-										parentanchor = bottom|left
-										blockoverride "visible" {
-											visible = "[And(GetPlayer.HasNewProductionMethodInGroup( ProductionMethodGroup.Self ), Not(IsDataModelEmpty(BuildingBrowserBuildingTypeItem.GetBuildingsInCountry)))]"
-										}
-									}
-
-
-									### nr available
-									textbox = {
-										raw_text = "#bold [ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf)]#!"
-										parentanchor = top|right
-										position = { -5 0 }
-										autoresize = yes
-										align = right|nobaseline
-										visible = "[GreaterThan_int32( ProductionMethodGroup.GetNumAvailableOptionsForBuildingType(BuildingBrowserBuildingTypeItem.GetBuildingType.AccessSelf), '(int32)1')]"
-										tooltip = "PRODUCTION_METHOD_OPTIONS_BULK"
-										using = tooltip_above
-										using = fontsize_small
-
-										background = {
-											using = default_background
-											margin = { 8 4 }
-										}
-									}
-								}
-							}
-						}
+                        MPM_pms_area_building_type = {
+                            parentanchor = center
+                            
+                            blockoverride scrollarea_size {
+                                size = { 200 60 }
+                            }
+                            blockoverride scrollbar_size {
+                                size = { 8 8 }
+                            }
+                            blockoverride track_size {
+                                size = { 8 4 }
+                            }
+                            blockoverride slider_size {
+                                framesize = { 40 8 }
+                            }
+                            blockoverride pm_size {
+                                size = { 50 50 }
+                            }
+                            blockoverride pm_icon_size {
+                                size = { 40 40 }
+                            }
+                        }
 					}
 
 					vertical_divider = {}
