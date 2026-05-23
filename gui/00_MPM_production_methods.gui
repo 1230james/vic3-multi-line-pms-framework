@@ -237,20 +237,6 @@ types production_methods
 				position = { -10 50 }    # MPM Framework (original vert was -5; 95 - 5 - 45 = 50
 				spacing = 5
 
-				### expand
-				button_icon_round_map_interaction = {
-					size = { 40 40 }
-					blockoverride "icon" {
-						texture = "gfx/interface/buttons/button_icons/plus.dds"
-					}
-
-					onclick = "[BuildingType.ActivateExpansionLens]"
-					using = select_button_sound
-					visible = "[And(Or( BuildingType.IsBuildable, BuildingType.IsExpandable ), Not(BuildingType.IsMilitaryBuilding))]"
-					tooltip = "EXPAND"
-					using = tooltip_se
-				}
-
 				### nationalize
 				building_type_nationalize_button = {
 					size = { 40 40 }
@@ -271,7 +257,21 @@ types production_methods
 
 				### auto expand
 				building_type_auto_expand_toggle = {
+					size = { 40 40 } 
+				}
+				
+				### expand
+				button_icon_round_map_interaction = {
 					size = { 40 40 }
+					blockoverride "icon" {
+						texture = "gfx/interface/buttons/button_icons/plus.dds"
+					}
+
+					onclick = "[BuildingType.ActivateExpansionLens]"
+					using = select_button_sound
+					visible = "[And(Or( BuildingType.IsBuildable, BuildingType.IsExpandable ), Not(BuildingType.GeneratesCombatUnits))]"
+					tooltip = "EXPAND"
+					using = tooltip_se
 				}
 			}
 
@@ -394,7 +394,7 @@ types production_methods
 			section_header_button = {
 				position = { 50 0 }
 				size = { 440 38 }
-
+				
 				blockoverride "left_text" {
 					raw_text = "#v [BuildingType.GetNameNoFormatting]#!"
 				}
@@ -405,11 +405,11 @@ types production_methods
 						tooltip = "PRODUCTIVITY_SPAN_TOOLTIP"
 					}
 				}
-
+				
 				blockoverride "onclick" {
 					onclick = "[BuildingProductionMethodsEntry.ToggleExpand]"
 				}
-
+				
 				blockoverride "onclick_showmore" {
 					visible = "[Not(BuildingProductionMethodsEntry.IsExpanded)]"
 				}
@@ -429,8 +429,6 @@ types production_methods
 					layoutpolicy_vertical = expanding
 					margin = { 0 0 }
 
-					spacing = 10
-
 					container = {
 						# MPM
 						# If only 1 or 2 PMGs, use vanilla container and not the scrollarea
@@ -445,7 +443,6 @@ types production_methods
 							addcolumn = 52
 							addrow = 50
 
-							item = {
 								widget = {
 									size = { 50 50 }
 									tooltip = "[BuildingProductionMethodsEntry.GetBulkChangeTooltip( ProductionMethodGroup.Self )]"
@@ -459,7 +456,7 @@ types production_methods
 										size = { 100% 100% }
 										onclick = "[RightClickMenuManager.ToggleSwitchProductionMethodMenuForType(BuildingProductionMethodsEntry.GetBuildingType, ProductionMethodGroup.AccessSelf, PdxGuiWidget.AccessSelf)]"
 									}
-
+									
 									### pm icon
 									icon = {
 										visible = "[BuildingProductionMethodsEntry.HasAllSameProductionMethod( ProductionMethodGroup.Self )]"
@@ -467,7 +464,7 @@ types production_methods
 										parentanchor = center
 										texture = "[BuildingProductionMethodsEntry.GetAllSameProductionMethodTexture( ProductionMethodGroup.Self )]"
 									}
-
+									
 									### mixed pm icon
 									icon = {
 										visible = "[Not( BuildingProductionMethodsEntry.HasAllSameProductionMethod( ProductionMethodGroup.Self ) )]"
@@ -475,7 +472,7 @@ types production_methods
 										parentanchor = center
 										texture = "[ProductionMethodGroup.GetMixedIcon]"
 									}
-
+									
 									### new pm
 									has_new_pm_icon = {
 										position = { -2 2 }
@@ -484,7 +481,7 @@ types production_methods
 											visible = "[GetPlayer.HasNewProductionMethodInGroup( ProductionMethodGroup.Self )]"
 										}
 									}
-
+																		
 
 									### nr available
 									textbox = {
@@ -598,17 +595,16 @@ types production_methods
 						}
 					}
 
-					construction_queue_sector_actions = {
-						min_width = 280 # MPM
-						max_width = 378 # MPM
-						layoutpolicy_horizontal = expanding
-						layoutpolicy_vertical = expanding
+					block "construction_content" {
+						construction_queue_sector_actions = {
+							layoutpolicy_horizontal = expanding
+							layoutpolicy_vertical = expanding
+						}
 					}
-
 				}
 			}
 
-
+			
 
 			### PRODUCTIVITY SPAN ###
 			textbox = {
