@@ -443,6 +443,7 @@ types production_methods
 							addcolumn = 52
 							addrow = 50
 
+							item = {
 								widget = {
 									size = { 50 50 }
 									tooltip = "[BuildingProductionMethodsEntry.GetBulkChangeTooltip( ProductionMethodGroup.Self )]"
@@ -511,7 +512,7 @@ types production_methods
 							'(int32)2'
 						)]" # MPM
 
-						min_width = 150
+						min_width = 104
 						layoutpolicy_horizontal = preferred
 						layoutpolicy_vertical   = expanding
 
@@ -544,7 +545,7 @@ types production_methods
 												size = { 100% 100% }
 												onclick = "[RightClickMenuManager.ToggleSwitchProductionMethodMenuForType(BuildingProductionMethodsEntry.GetBuildingType, ProductionMethodGroup.AccessSelf, PdxGuiWidget.AccessSelf)]"
 											}
-
+											
 											### pm icon
 											icon = {
 												visible = "[BuildingProductionMethodsEntry.HasAllSameProductionMethod( ProductionMethodGroup.Self )]"
@@ -552,7 +553,7 @@ types production_methods
 												parentanchor = center
 												texture = "[BuildingProductionMethodsEntry.GetAllSameProductionMethodTexture( ProductionMethodGroup.Self )]"
 											}
-
+											
 											### mixed pm icon
 											icon = {
 												visible = "[Not( BuildingProductionMethodsEntry.HasAllSameProductionMethod( ProductionMethodGroup.Self ) )]"
@@ -560,7 +561,7 @@ types production_methods
 												parentanchor = center
 												texture = "[ProductionMethodGroup.GetMixedIcon]"
 											}
-
+											
 											### new pm
 											has_new_pm_icon = {
 												position = { -2 2 }
@@ -569,7 +570,7 @@ types production_methods
 													visible = "[GetPlayer.HasNewProductionMethodInGroup( ProductionMethodGroup.Self )]"
 												}
 											}
-
+																				
 
 											### nr available
 											textbox = {
