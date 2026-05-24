@@ -1,12 +1,12 @@
 {
     "name" : "Multi-line Production Methods Framework",
     "id" : "xyz.1230james.multiline_pms",
-    "version" : "1.7.2",
+    "version" : "1.7.3",
     "game_id" : "victoria3",
-    "supported_game_version" : "1.12.*",
+    "supported_game_version" : "1.13.*",
     "short_description" : "",
     "tags" : [
-        "1.9", "1.10", "1.11", "1.12",
+        "1.13",
         "Economy And Buildings",
         "Graphics",
         "Utilities"
