@@ -429,12 +429,16 @@ types building_panels
 		}
 	}
 	
-	# Duplicate of `condensed_building_information_pms` but skips first 4 instead
+	# Duplicate of `condensed_building_information_pms` but skips first 4 instead, has a new pm_wrap block, & excludes the trade center stuff
 	type MPM_condensed_building_information_pms_row_2 = container {
 		fixedgridbox = {
 			name = "tutorial_highlight_condensed_production_methods"
 			datamodel = "[DataModelSkipFirst(Building.AccessProductionMethodGroups, '(int32)4')]" # MPM - Skip first 4
 			flipdirection = yes
+			
+			block "pm_wrap" {
+				datamodel_wrap = 7 # MPM
+			}
 
 			block "pms_slot_sizes" {
 				addcolumn = 52
@@ -498,77 +502,6 @@ types building_panels
 							using = default_background
 							margin = { 8 4 }
 
-						}
-					}
-				}
-			}
-		}
-
-		flowcontainer = {
-			block "trade_center_extra_info_visibility" {
-				visible = "[ObjectsEqual(Building.GetBuildingType, GetBuildingType('building_trade_center').Self)]"
-			}
-
-			block "trade_center_extra_info_position" {
-				position = { 150 0 }
-			}
-
-			direction = vertical
-			parentanchor = vcenter
-
-			block "trade_center_extra_info_line_spacing" {
-				spacing = 4
-			}
-
-			flowcontainer = {
-				spacing = 5
-
-				icon = {
-					texture = "gfx/interface/icons/trade_icons/imports.dds"
-					size = { 23 23 }
-				}
-
-				vertical_divider = {}
-
-				overlappingitembox = {
-					block "trade_center_extra_info_size" {
-						size = { 110 23 }
-					}
-
-					datamodel = "[Building.AccessState.GetImports]"
-
-					item = {
-						small_goods_button = {
-							blockoverride "tooltip" {
-								tooltip = "[Goods.GetStateImportsDesc]"
-							}
-						}
-					}
-				}
-			}
-
-			flowcontainer = {
-				spacing = 5
-
-				icon = {
-					texture = "gfx/interface/icons/trade_icons/exports.dds"
-					size = { 23 23 }
-				}
-
-				vertical_divider = {}
-
-				overlappingitembox = {
-					block "trade_center_extra_info_size" {
-						size = { 110 23 }
-					}
-
-					datamodel = "[Building.AccessState.GetExports]"
-
-					item = {
-						small_goods_button = {
-							blockoverride "tooltip" {
-								tooltip = "[Goods.GetStateExportsDesc]"
-							}
 						}
 					}
 				}
